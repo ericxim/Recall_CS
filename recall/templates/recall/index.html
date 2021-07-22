@@ -1,0 +1,69 @@
+{% extends 'recall/base.html' %}
+{% block content %}
+<div class="header">
+    <div class="container text-center py-5">
+        <h1 class="display-2">Recall Media Studies</h1>
+        <p>Learn and revise through the various topics for Eduqas Media Studies</p>
+    </div>
+</div>
+<div class="container py-5">
+    <h1 class="display-4 mb-5">Learn with others with Recall Media Studies</h1>
+    <div class="row">
+        <div class="col-md-7">
+            <div class="border-bottom pb-2">
+                <h1>Track your progress throughout topics</h1>
+                <p>
+                Recall Media allows users to get a clear understanding of how they are progressing
+                within a certain topic.
+                </p>
+            </div>
+            <div class="border-bottom py-3">
+                <h1>Get insightful feedback</h1>
+                <p>
+                Recall Media allows users to get clear and visual indicators of their performance. Other users can also contribute their thoughts
+                and useful resources.
+                </p>
+            </div>
+            <div class="py-3">
+                <h1>Learn quicker and anywhere</h1>
+                <p>
+                With Recall Media it can be accessed through multiple devices and is proven to increase efficiency learning
+                </p>
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="card p-3">
+                <h2>Get Started</h2>
+                <a href="{% url 'register' %}" class="mb-2"><button class="btn btn-block">Register an account</button></a>
+                <h2 class="pt-4">Already Joined?</h2>
+                <a href="{% url 'login' %}"><button class="btn btn-block">Login</button></a>
+            </div>
+        </div>
+</div>
+</div>
+<div>
+    <div class="text-center">
+        <h1>What is Recall Media Studies?</h1>
+    </div>
+    <div class="about-div">
+        <div class="container">
+            <div class="row text-center">
+                <div class="py-5">
+                    <p class="fs-2">
+                    Recall Media is a website aimed at helping indiviuals with their understanding of the subject Media Studies
+                    by giving them a more streamlined method of accessing the relevant and useful information/resources. Users have the capability to
+                    join communities and contribute towards them, in addition community admins have the ability to assign questions and assess the performance of each member.
+                    </p>
+                    <h2>What is Media Studies?</h2>
+                    <p>
+                    Media Studies is the theoretical analysis of Media, there are many theorist that have studied the properties of Media such as how it is displayed and spread throughout society.
+                    This gives individuals to ability to be more aware and skeptical of what is being shared around.
+                    </p>
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/qE-B_XkoAgQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

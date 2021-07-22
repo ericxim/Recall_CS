@@ -1,0 +1,25 @@
+{% extends 'recall/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-md-5">
+            <div class="card p-5">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <h1>Login to your account</h1>
+                    <div>
+                        <p>Username</p>
+                        {{ form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <p>Password</p>
+                        {{ form.password }}
+                    </div>
+
+                    <button class="btn btn-block">Login</button>
+                </div>
+                </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

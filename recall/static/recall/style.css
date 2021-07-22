@@ -1,0 +1,29 @@
+.navbar div a{
+    text-decoration:none;
+    color: black;
+    font-weight: bold;
+}
+
+.nav-item a{
+    padding-bottom: 0px !important;
+    transition: all .2s ease-in
+}
+
+.nav-item a:hover {
+    border-bottom: 3px solid #ff2b2b !important;
+}
+
+.about-div{
+    background-color:#e8e8e8;
+}
+
+.header{
+    background-color:#30c9f0 ;
+    color:white
+}
+
+.footer {
+    background-color: #474747;
+    color:white;
+    padding: 30px 0px 300px 0px
+}
