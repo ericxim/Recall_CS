@@ -1,3 +1,5 @@
+from django.db.models.fields.related import ForeignKey
+from django.db.models.query import QuerySet
 from .forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -16,29 +18,22 @@ from django.contrib.auth.models import User
 
 from .models import *
 
-
-
 def index(request):
     if request.user.is_authenticated:
         return HomeView.as_view()(request)
     return render(request,"recall/index.html")
 
-
 class HomeView(ListView):
     template_name="recall/home.html"
-    context_object_name='Posts'
-    model = Post
-
-    def get_context_data(self, **kwargs):
-        communitites = CommunityMember.objects.filter(user_id=self.request.user.id)
-        context = super(HomeView, self).get_context_data(**kwargs)
-        return context
+    context_object_name='communities'
+    
+    def get_queryset(self):
+        communities = self.request.user.communities.all()
+        return communities    
 
 class QuestionView(DetailView):
     pass
-    
 
-    
 class RegisterView(CreateView):
   template_name = 'recall/register.html'
   success_url = reverse_lazy('login')
