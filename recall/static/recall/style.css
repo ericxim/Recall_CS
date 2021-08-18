@@ -1,16 +1,17 @@
-.navbar div a{
-    text-decoration:none;
-    color: black;
-    font-weight: bold;
+html, body{
+    height:100%
 }
 
-.nav-item a{
-    padding-bottom: 0px !important;
-    transition: all .2s ease-in
+body{
+    margin: 0;
 }
 
-.nav-item a:hover {
-    border-bottom: 3px solid #ff2b2b !important;
+
+.login-form-wrapper{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 
 .about-div{
@@ -26,4 +27,13 @@
     background-color: #474747;
     color:white;
     padding: 30px 0px 300px 0px
+}
+
+.response-input-box{
+    width: 100%
+}
+
+
+.response-input-box textarea{
+    width: 100%
 }

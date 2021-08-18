@@ -1,0 +1,21 @@
+{% extends 'recall/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="mt-5">
+        <h1 class="pb-5 border-bottom">{{ question.title }}</h1>
+        <h1>{{ question.content }} [{{ question.mark }}]</h1>
+    </div>
+    <div class="mt-5 card p-5">
+        <h3>Enter your response</h3>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="response-input-box my-5">
+                {{ form.content }}
+            </div>
+            <div>
+                <button type="submit" value="save" class="btn">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

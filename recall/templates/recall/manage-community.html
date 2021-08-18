@@ -1,0 +1,36 @@
+{% extends 'recall/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="mt-5">
+        <div class="py-3 mb-5 border-bottom">
+            <h1>{{ community.name }}</h1>
+        </div>
+        <h2>Members</h2>
+        <table class="table">
+            <tbody>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Questions assigned</th>
+                        <th>Questions answered</th>             
+                    </tr>
+                </thead>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            {{ user.username }}
+                        </td>
+                        <td>
+                            {{ user.questionresponse_set.all.count }}
+                        </td>
+                        <td>
+                            {{ user.get_completed_responses }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock content%}

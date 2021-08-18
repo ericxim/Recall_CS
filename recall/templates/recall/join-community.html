@@ -1,0 +1,14 @@
+{% extends 'recall/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="card p-5 mt-5">
+        <h3>Join a Commuinity</h3>
+        <p>Community Code</p>
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ form.community_code }}
+            <button class="btn mx-3">Join</button>
+        </form> 
+    </div>
+</div>
+{% endblock content %}
