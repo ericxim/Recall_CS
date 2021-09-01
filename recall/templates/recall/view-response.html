@@ -1,0 +1,35 @@
+{% extends 'recall/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="mt-5">
+        <h1 class="pb-5 border-bottom">{{ question.user }} </h1>
+        <h1 class="mt-5">{{ question.question.title }}</h1>
+    </div>
+    <div class="mt-5 card p-5">
+    {% if question.content %}
+       {{ question.content }}
+    {% else %}
+    <h1>Question has not been attempted</h1>
+    {% endif %}
+    </div>
+    <div class="card p-5 mt-5">
+        
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div>
+                <h2>Add mark</h2>
+            </div>
+            <div class="mb-5">
+                <input type="text" name="mark">
+            </div>
+            <h2>Add feedback</h2>
+            <div class="form-input-box">
+                {{ form.content }}
+            </div>
+            <div class="mt-5">
+                <button value="submit">Add</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

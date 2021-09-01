@@ -13,6 +13,16 @@ class User(AbstractUser):
     def get_completed_responses(self):
         return len(QuestionResponse.objects.filter(user=self, is_complete=True))
     
+    def get_average_marks(self):
+        responses = QuestionResponse.objects.filter(user=self, is_complete=True)
+        if not responses:
+            return "No questions completed"
+        marks = 0
+        for response in responses:
+            if response.mark:
+                marks += response.mark
+        average = marks / len(responses)
+        return average
 
 class Community(models.Model):
     name = models.CharField(max_length=30)
@@ -27,7 +37,10 @@ class Community(models.Model):
     def save(self, *args, **kwargs):
         super(Community, self).save(*args, **kwargs)
         self.users.add(self.admin)
-
+        
+    def get_absolute_url(self):
+        return reverse('community', kwargs={'pk':self.id})
+        
     def __str__(self):
         return self.name
         
@@ -39,6 +52,9 @@ class Post(models.Model):
     content = models.TextField()
     date_created = models.DateTimeField(default=timezone.now)
     likes = models.BigIntegerField(default=0)
+
+    def get_absolute_url(self):
+        return reverse('post', kwargs={'pk':self.id})
     
     def __str__(self):
         return self.content
@@ -53,7 +69,6 @@ class Question(models.Model):
     
     def save(self, *args, **kwargs):
         super(Question, self).save(*args, **kwargs)
-        
         community = Community.objects.get(id=self.community.id)
         all_users = community.users.all()
         objs = []
@@ -64,6 +79,7 @@ class Question(models.Model):
          
     def __str__(self):
         return self.title
+    
 
 class QuestionResponse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -73,8 +89,11 @@ class QuestionResponse(models.Model):
     mark = models.IntegerField(null=True)
     is_complete = models.BooleanField(default=False)
     
+        
     def __str__(self):
         return self.user.username + " | "+ self.question.title
+
+
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -85,4 +104,12 @@ class Comment(models.Model):
     
     def __str__(self):
         return self.content
+
+class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    response = models.ForeignKey(QuestionResponse,on_delete=models.CASCADE)
+    content = models.TextField()
+    date_created = models.DateTimeField(default=timezone.now)
     
+    def __str__(self):
+        return self.user.username + " | " + self.content

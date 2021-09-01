@@ -10,14 +10,9 @@
         {% endif %}
     </div>
 </div>
-<div class="container py-5">
+<div class="container py-3">
     {% for question in questions %}
     <div class="card my-3">
-        <div class="border-bottom">
-            <div class="p-3">
-                {{ question.question.user }}
-            </div>
-        </div>
         <a href="{% url 'question' question.id %}">
         <div class="border-bottom">
             <div class="p-3">
@@ -27,17 +22,15 @@
         <div class="p-3">
             <p>Date assigned: {{ question.question.date_assigned }}</p>
             <h5>[{{ question.question.mark }}] Marks for question</h5>
-            {% if question.is_completed %}
+            {% if question.is_complete %}
             <p>Completed</p>
             {% else %}
-            <p>Incompleted</p>
+            <p>Incomplete</p>
+            {% endif %}
+            {% if question.mark %}
+            <p>Marked</p>
             {% endif %}
         </div>
-        {% if user.id == community.admin.id %}
-        <div class="p-3">
-            <a>Delete</a>
-        </div>
-        {% endif %}
     </div>
     </a>
     {% endfor %}

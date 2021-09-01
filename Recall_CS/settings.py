@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-mzt@cl2928fk!h8a3#s)urcqj+!ffnww&-qri!i8)1^b%%^@+d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'recall',
+    'django_filters'
 ]
 
 AUTH_USER_MODEL = 'recall.User'

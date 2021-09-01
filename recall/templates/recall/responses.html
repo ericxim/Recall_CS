@@ -1,0 +1,45 @@
+{% extends 'recall/base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="my-5">Responses</h1>
+    <div class="card my-5 p-3">
+        <form action="" class="mb-5">
+            <h2>Filter responses</h2>
+            {{ response_filter.form }}
+            <button>Search</button>
+        </form>
+    </div>
+{% if responses %}
+{% for response in responses %}
+    <div class="card my-3">
+        <div class="border-bottom">
+            <div class="p-3">
+                {{ response.user }}
+            </div>
+        </div>
+        <a href="{% url 'user-response' response.user response.id %}">
+        <div class="border-bottom">
+            <div class="p-3">
+                <h1>{{ response.question.title }}</h1>
+            </div>
+        </div>
+        <div class="p-3">
+            <p>Date assigned: {{ response.question.date_assigned }}</p>
+            <h5>[{{ response.question.mark }}] Marks for question</h5>
+            {% if response.is_complete %}
+            <p>Completed</p>
+            {% else %}
+            <p>Incompleted</p>
+            {% endif %}
+            {% if question.mark %}
+            <p>Marked</p>
+            {% endif %}
+        </div>
+        </a>
+    </div>
+{% endfor %}
+{% else %}
+<h1>No responses found</h1>
+{% endif %}
+</div>
+{% endblock content %}

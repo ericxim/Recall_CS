@@ -1,14 +1,14 @@
 {% extends 'recall/base.html' %}
 {% block content %}
 <div class="container">
-    <div class="row mt-5 login-form-wrapper">
-        <div class="col-md-5">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-md-5 ">
             <div class="card p-5">
                 <form action="" method="POST">
                     <h1>Register an account</h1>
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <button type="submit" value="save" class="btn btn-block">Login</button>
+                    <button type="submit" value="save" class="btn btn-block">Register</button>
                 </form>
             </div>
         </div>

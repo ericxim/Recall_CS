@@ -4,6 +4,15 @@
     <div class="mt-5">
         <div class="py-3 mb-5 border-bottom">
             <h1>{{ community.name }}</h1>
+            
+        </div>
+        <div class="d-flex flex-row card p-3 mb-5">
+            <div class="nav-link">
+                <a href="{% url 'responses' community.id%}">Responses</a>
+            </div>
+            <div class="nav-link">
+                <a href="{% url 'create-question' community.id %}">Create a question</a>
+            </div>
         </div>
         <h2>Members</h2>
         <table class="table">
@@ -12,7 +21,8 @@
                     <tr>
                         <th>User</th>
                         <th>Questions assigned</th>
-                        <th>Questions answered</th>             
+                        <th>Questions answered</th>
+                        <th>Average marks / question</th>             
                     </tr>
                 </thead>
                     {% for user in users %}
@@ -25,6 +35,9 @@
                         </td>
                         <td>
                             {{ user.get_completed_responses }}
+                        </td>
+                        <td>
+                            {{ user.get_average_marks }}
                         </td>
                     </tr>
                     {% endfor %}
