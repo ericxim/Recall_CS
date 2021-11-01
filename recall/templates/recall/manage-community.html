@@ -1,14 +1,18 @@
 {% extends 'recall/base.html' %}
 {% block content %}
-<div class="container">
-    <div class="mt-5">
+<div class="container mt-5">
+    <div class="mb-3">
+        <a href="{% url 'community' view.kwargs.pk %}">Back</a>
+    </div>
         <div class="py-3 mb-5 border-bottom">
             <h1>{{ community.name }}</h1>
-            
         </div>
         <div class="d-flex flex-row card p-3 mb-5">
             <div class="nav-link">
-                <a href="{% url 'responses' community.id%}">Responses</a>
+                <a href="{% url 'questions' community.id %}">Questions</a>
+            </div>
+            <div class="nav-link">
+                <a href="{% url 'responses' community.id %}">Responses</a>
             </div>
             <div class="nav-link">
                 <a href="{% url 'create-question' community.id %}">Create a question</a>
@@ -31,19 +35,17 @@
                             {{ user.username }}
                         </td>
                         <td>
-                            {{ user.questionresponse_set.all.count }}
+                           {{ user.get_question_count }}
                         </td>
                         <td>
-                            {{ user.get_completed_responses }}
+                            
                         </td>
                         <td>
-                            {{ user.get_average_marks }}
+                            
                         </td>
                     </tr>
                     {% endfor %}
             </tbody>
         </table>
-    </div>
 </div>
-
 {% endblock content%}

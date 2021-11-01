@@ -1,0 +1,16 @@
+{% extends 'recall/base.html' %}
+{% block content %}
+<div class="container p-5">
+    <div class="card p-5">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <h2>Are you sure you want to delete</h2>
+            <h3>{{ object }}</h3>
+            <div class="pt-3 border-top">
+                <button class="btn" name="confirm">Yes</button>
+                <a href="{% url 'questions' object.community.id %}"><div class="btn mx-3">No</div></a>
+            </div>
+        </form> 
+    </div>
+</div>
+{% endblock content %}

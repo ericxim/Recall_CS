@@ -9,6 +9,7 @@ import uuid
 
 class User(AbstractUser):
     communities = ManyToManyField('Community', related_name="users")
+
     
     def get_completed_responses(self):
         return len(QuestionResponse.objects.filter(user=self, is_complete=True))

@@ -1,7 +1,7 @@
 {% extends 'recall/base.html' %}
 {% block content %}
-<div class="container">
-    <div class="card p-5 mt-5">
+<div class="container p-5">
+    <div class="card p-5">
         <h3>Join a Commuinity</h3>
         <p>Community Code</p>
         <form action="" method="POST">
@@ -9,6 +9,21 @@
             {{ form.community_code }}
             <button class="btn mx-3">Join</button>
         </form> 
+        {% if messages %}
+        {% for message in messages %}
+        <div class="mt-5">
+            {% if message.tags == 'success' %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% else %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% endif %}
     </div>
 </div>
 {% endblock content %}

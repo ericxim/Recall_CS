@@ -1,6 +1,10 @@
 {% extends 'recall/base.html' %}
 {% block content %}
-<div class="container">
+
+<div class="container py-5">
+    <div>
+        <a href="{% url 'community' view.kwargs.pk %}">Back</a>
+    </div>
     <div class="mt-5">
         <h1 class="pb-5 border-bottom">{{ question.title }}</h1>
         <h1 class="mt-5">{{ question.content }} [{{ question.mark }}]</h1>
@@ -22,7 +26,8 @@
                 {{ form.content }}
             </div>
             <div>
-                <button type="submit" value="save" class="btn">Submit</button>
+                <button type="submit" value="save" name="save" class="btn">Save</button>
+                <button type="submit" value="save" name="submit" class="btn">Submit</button>
             </div>
         </form>
         {% endif %}

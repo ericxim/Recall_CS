@@ -1,12 +1,15 @@
 {% extends 'recall/base.html' %}
 {% block content %}
-<div class="container">
-    <h1 class="my-5">Responses</h1>
+<div class="container py-5">
+    <div class="mb-3">
+        <a href="{% url 'manage-community' view.kwargs.pk %}">Back</a>
+    </div>
+    <h1>Responses</h1>
     <div class="card my-5 p-3">
         <form action="" class="mb-5">
             <h2>Filter responses</h2>
             {{ response_filter.form }}
-            <button>Search</button>
+            <button class="btn">Search</button>
         </form>
     </div>
 {% if responses %}

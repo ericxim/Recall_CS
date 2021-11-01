@@ -1,18 +1,16 @@
 from django.db.models import fields
 from django.db.models.fields.related import ForeignKey
 from django.db.models.query import QuerySet
-from django.forms.forms import Form
-from django.views.generic.base import TemplateResponseMixin, TemplateView
-from .forms import FeedbackForm, JoinCommunityForm, QuestionForm, QuestionResponseForm, RegistrationForm, CreateCommunityForm
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-from django.shortcuts import render, redirect, get_object_or_404
+from .forms import FeedbackForm, JoinCommunityForm, QuestionForm, QuestionResponseForm, RegistrationForm, CreateCommunityForm, CreatePostForm
+from django.shortcuts import render
+
+from django.http import HttpResponseRedirect, request
 
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.urls.base import reverse
 
-from django.views.generic.edit import CreateView, FormView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.views import LoginView
@@ -20,9 +18,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 from .mixins import CheckQuestionObjectMixin, CheckCommunityAdminMixin, CheckMember, CheckQuestionUser
-from . filters import QuestionResponseFilter
+from . filters import QuestionResponseFilter, QuestionFilter
 
 from .models import *
+from django.http import Http404
 
 import uuid 
 
@@ -71,12 +70,15 @@ class JoinCommunityView(FormView):
         community = Community.objects.filter(community_code=form.cleaned_data['community_code'])
         if community:
             community = Community.objects.get(community_code=form.cleaned_data['community_code'])
+            
             if self.request.user.communities.filter(name=community).exists():
                 messages.error(self.request, f"Already in {community}")
                 return super(JoinCommunityView, self).form_valid(form)
+            
             community.users.add(self.request.user)
             messages.success(self.request, f"Joined {community}")
             return super(JoinCommunityView, self).form_valid(form)
+        
         messages.error(self.request, f"Community does not exist")
         return super(JoinCommunityView, self).form_invalid(form)
     
@@ -89,9 +91,10 @@ class QuestionView(CheckQuestionUser, UpdateView):
     form_class = QuestionResponseForm
     
     def post(self, request, **kwargs):
-        request.POST = request.POST.copy()
-        request.POST['is_complete'] = 'on'
-        print(request.POST)
+        if 'submit' in request.POST:
+            request.POST = request.POST.copy()
+            request.POST['is_complete'] = 'on'
+
         return super(QuestionView, self).post(request, **kwargs)
     
     def get_success_url(self):
@@ -117,6 +120,24 @@ class CommunityView(CheckMember, DetailView):
         context['questions'] = questions
         return context
 
+class CommunityPostsView(CheckMember, ListView):
+    template_name='recall/community-posts.html'
+    model = Post
+    context_object_name = 'posts'
+    
+    def get_queryset(self):
+        posts = Post.objects.filter(community_id=self.kwargs['pk'])
+        return posts
+
+
+    def get_context_data(self, **kwargs):
+        context = super(CommunityPostsView, self).get_context_data(**kwargs)
+        community = Community.objects.get(id = self.kwargs['pk'])
+        context['community'] = community
+        return context
+
+    
+
 class ManageCommunityView(CheckCommunityAdminMixin,DetailView):
     template_name = 'recall/manage-community.html'
     model = Community
@@ -125,7 +146,7 @@ class ManageCommunityView(CheckCommunityAdminMixin,DetailView):
     def get_context_data(self, **kwargs):
         context = super(ManageCommunityView, self).get_context_data(**kwargs)
         community = Community.objects.get(id = self.kwargs['pk'])
-        users = community.users.all()        
+        users = community.users.all()
         context['users'] = users
         return context
 
@@ -142,8 +163,21 @@ class CreateQuestionView(CheckCommunityAdminMixin, CreateView):
 
     def get_success_url(self):
         return reverse('community', args=[self.kwargs['pk']])
+
+class QuestionsView(CheckCommunityAdminMixin,ListView):
+    template_name = 'recall/questions.html'
+    model = Question
     
-class ResponseView(CheckCommunityAdminMixin,DetailView):
+    def get_context_data(self, **kwargs):
+        context = super(QuestionsView, self).get_context_data(**kwargs)
+        questions = Question.objects.filter(community=self.kwargs['pk'])
+        question_filter = QuestionFilter(self.request.GET, queryset=questions)
+        questions = question_filter.qs
+        context['questions'] = questions
+        context['question_filter'] = question_filter
+        return context
+    
+class ResponseView(CheckCommunityAdminMixin,ListView):
     template_name = 'recall/responses.html'
     model = QuestionResponse
     
@@ -164,25 +198,65 @@ class UserResponseView(CreateView):
     def post(self, request, *args, **kwargs):
         if request.POST.get('mark', False):
             response = QuestionResponse.objects.get(id=self.kwargs['pk'], user__username=self.kwargs['user'])
+            if int(request.POST['mark']) > response.question.mark or int(request.POST['mark']) < 0:
+                return HttpResponseRedirect(reverse('responses', kwargs={'pk': response.question.community.id }))
             response.mark = request.POST['mark']
             response.save()
-        return super(UserResponseView, self).post(request, *args, **kwargs)
+        super(UserResponseView, self).post(request, *args, **kwargs)
+        response = QuestionResponse.objects.get(id=self.kwargs['pk'], user__username=self.kwargs['user'])
+        return HttpResponseRedirect(reverse('responses', kwargs={'pk': response.question.community.id }))
 
     def form_valid(self, form):
+        response = QuestionResponse.objects.get(id=self.kwargs['pk'], user__username=self.kwargs['user'])
+        if not form.instance.content:
+            return HttpResponseRedirect(reverse('responses', kwargs={'pk': response.question.community.id }))
         form.instance.user = self.request.user
-        form.instance.response = QuestionResponse.objects.get(id=self.kwargs['pk'], user__username=self.kwargs['user'])
+        form.instance.response = response
         return super(UserResponseView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super(UserResponseView, self).get_context_data(**kwargs)
-        context['question'] = QuestionResponse.objects.get(id=self.kwargs['pk'], user__username=self.kwargs['user'])
-        print(context['question'])
+        user_response = QuestionResponse.objects.get(id=self.kwargs['pk'], user__username=self.kwargs['user'])
+        context['question'] = user_response
+        context['feedback'] = Feedback.objects.filter(response=user_response)
         return context
 
     def get_success_url(self):
         obj = QuestionResponse.objects.get(id=self.kwargs['pk'], user__username=self.kwargs['user'])
         return reverse('community', args=[obj.question.community.id])
 
+class CreatePostView(CreateView):
+    model = Post
+    template_name = 'recall/create-post.html'
+    form_class = CreatePostForm
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'request': self.request})
+        return kwargs
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class PostView(DetailView):
+    model = Post
+    template_name ='recall/post.html'
+    
+    
+     
+class DeleteQuestionView(DeleteView):
+    model=Question
+    template_name = 'recall/delete-question.html'
+    
+    def get_object(self, queryset=None):
+        obj = super(DeleteView, self).get_object()
+        if not obj.community.admin == self.request.user:
+            raise Http404
+        return obj
+    
+    def get_success_url(self):
+        return reverse('questions', args=[self.kwargs['community']])
     
 class RegisterView(CreateView):
   template_name = 'recall/register.html'
@@ -192,6 +266,7 @@ class RegisterView(CreateView):
 class LoginView(LoginView):
     template_name="recall/login.html"
     redirect_field_name="home"
+
 
 def handler404(request, exception, template_name="404.html"):
     response = render(template_name)

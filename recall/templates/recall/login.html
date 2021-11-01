@@ -1,21 +1,22 @@
 {% extends 'recall/base.html' %}
+{% load crispy_forms_tags %}
 {% block content %}
 <div class="container">
     <div class="row mt-5 justify-content-center">
         <div class="col-md-5">
             <div class="card p-5">
                 <form action="" method="POST">
-                    {% csrf_token %}
                     <h1>Login to your account</h1>
-                    <div>
-                        <p>Username</p>
-                        {{ form.username }}
-                    </div>
-                    <div class="my-3">
-                        <p>Password</p>
-                        {{ form.password }}
-                    </div>
+                    {% csrf_token %}
+                    {{ form|crispy }}
                     <button type="submit" value="save" class="btn btn-block">Login</button>
+                    {% if form.errors %}
+                        {% for error in field.errors %}
+                            <div>
+                                <p>{{ error|escape }}</p>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                     </div>
                 </form>
             </div>
